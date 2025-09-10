@@ -1,15 +1,7 @@
 from __future__ import annotations
 
-from .env import env, get_bool, get_float, get_int, get_list
-from .settings import (
-    ALLOWED_HOSTS,
-    APP_NAME,
-    CORS_ORIGINS,
-    DEBUG,
-    ENV,
-    LOG_LEVEL,
-    PORT,
-)
+from .env import env, get_bool, get_float, get_int, get_list, reload_repository
+from . import settings as settings
 
 __all__ = [
     # wrapper
@@ -18,13 +10,7 @@ __all__ = [
     "get_int",
     "get_float",
     "get_list",
-    # settings
-    "APP_NAME",
-    "DEBUG",
-    "ENV",
-    "PORT",
-    "CORS_ORIGINS",
-    "ALLOWED_HOSTS",
-    "LOG_LEVEL",
+    "reload_repository",
+    # settings namespace (prefer importing this)
+    "settings",
 ]
-

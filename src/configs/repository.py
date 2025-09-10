@@ -33,17 +33,16 @@ class RepositorySecret:
                 continue
             try:
                 with open(path, "r", encoding="utf-8") as f:
-                    self.data[entry.upper()] = f.read()
+                    # Most secret files end with a trailing newline; strip it.
+                    self.data[entry.upper()] = f.read().rstrip("\n")
             except OSError:
                 # Silently skip unreadable files
                 continue
 
     def __contains__(self, key: str) -> bool:
-        return key in self.data or key in os.environ
+        return key in self.data
 
     def __getitem__(self, key: str) -> str:
-        if key in os.environ:
-            return os.environ[key]
         return self.data[key]
 
 

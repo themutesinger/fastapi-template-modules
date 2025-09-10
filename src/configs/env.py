@@ -12,9 +12,21 @@ _TRUE_VALUES = {"1", "true", "yes", "y", "on"}
 _FALSE_VALUES = {"0", "false", "no", "n", "off"}
 
 
-# Build a composite repository: process env first, then secrets directory.
 _SECRETS_PATH = os.getenv("SECRETS_PATH", "/run/secrets/")
 _REPOSITORY = CompositeRepository(EnvRepository(), RepositorySecret(_SECRETS_PATH))
+
+
+def reload_repository(*, secrets_path: str | None = None) -> None:
+    """Rebuild the repository chain.
+
+    Useful in tests or when changing ``SECRETS_PATH`` at runtime.
+    """
+    global _SECRETS_PATH, _REPOSITORY
+    if secrets_path is not None:
+        _SECRETS_PATH = secrets_path
+    else:
+        _SECRETS_PATH = os.getenv("SECRETS_PATH", "/run/secrets/")
+    _REPOSITORY = CompositeRepository(EnvRepository(), RepositorySecret(_SECRETS_PATH))
 
 
 def env(name: str, default: Any | None = None) -> Any | None:
@@ -85,4 +97,4 @@ def get_list(
     return [caster(item) for item in items if item]
 
 
-__all__ = ["env", "get_bool", "get_int", "get_float", "get_list"]
+__all__ = ["env", "get_bool", "get_int", "get_float", "get_list", "reload_repository"]

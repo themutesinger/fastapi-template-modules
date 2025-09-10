@@ -34,3 +34,11 @@ Health check: http://127.0.0.1:8000/health
 - Configuration: `docs/configuration.md`
 - Development: `docs/development.md`
 - Project Structure: `docs/project-structure.md`
+
+Preferred usage pattern for settings:
+
+```python
+from configs import settings
+
+print(settings.APP_NAME)
+```
