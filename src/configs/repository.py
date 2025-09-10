@@ -32,7 +32,7 @@ class RepositorySecret:
             if os.path.isdir(path):
                 continue
             try:
-                with open(path, "r", encoding="utf-8") as f:
+                with open(path, encoding="utf-8") as f:
                     # Most secret files end with a trailing newline; strip it.
                     self.data[entry.upper()] = f.read().rstrip("\n")
             except OSError:
