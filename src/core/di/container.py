@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-from fastapi import FastAPI
-from dishka import Container
+from dishka import Container, make_container
 from dishka.integrations.fastapi import setup_dishka
+from fastapi import FastAPI
 
 
 def build_container() -> Container:
-    container = Container()
+    container = make_container()
     return container
 
 
 def setup_di(app: FastAPI) -> Container:
-    """Build and attach DI container to FastAPI via Dishka integration."""
     container = build_container()
-    setup_dishka(app, container)
+    setup_dishka(container, app)  # type: ignore[arg-type]
     return container
-

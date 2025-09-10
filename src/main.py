@@ -1,9 +1,11 @@
 from fastapi import FastAPI
-from di import setup_di
+
+from core.di import setup_di
+from configs.settings import APP_NAME
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="FastAPI Template")
+    app = FastAPI(title=APP_NAME)
 
     setup_di(app)
 
@@ -15,5 +17,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
-
