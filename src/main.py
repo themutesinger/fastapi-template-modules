@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from core.di import setup_di
 from configs import settings
+from di import setup_di
 
 
 def create_app() -> FastAPI:

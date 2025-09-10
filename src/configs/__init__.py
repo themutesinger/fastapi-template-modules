@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from . import settings
 from .env import env, get_bool, get_float, get_int, get_list, reload_repository
-from . import settings as settings
 
 __all__ = [
     # wrapper
