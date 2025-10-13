@@ -21,7 +21,7 @@ class ApiHTTPError(ApiClientError):
 
 
 class BaseApiClient:
-    """Простой httpx клиент с ретраями и защитой от мертвого клиента."""
+    """Simple httpx client with retries and protection against a dead client."""
 
     timeout = httpx.Timeout(10.0, read=10.0)
     max_retries = 3
