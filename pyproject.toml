@@ -21,6 +21,7 @@ dependencies = [
     "punq>=0.7.0",
     "redis>=6.4.0",
     "sqlalchemy[asyncio]>=2.0.43",
+    "psycopg2-binary>=2.9.9",
     "uvicorn[standard]>=0.35.0",
     "PyJWT>=2.9.0",
 ]
@@ -53,7 +54,7 @@ extend-select = ["I", "B", "C4", "T20", "UP"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["app", "modules"]
+known-first-party = ["app", "apps"]
 combine-as-imports = true
 
 [tool.mypy]

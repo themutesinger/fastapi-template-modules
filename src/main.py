@@ -1,13 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 
-from core.di import setup_di
-from configs import settings
+from di.container import setup_di
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title=settings.APP_NAME)
-
+    app = FastAPI()
     setup_di(app)
+
+    from apps.users.views.router import router as users_router
+
+    api_v1 = APIRouter(prefix="/api/v1")
+    api_v1.include_router(users_router)
+    app.include_router(api_v1)
 
     @app.get("/health")
     async def health() -> dict[str, str]:

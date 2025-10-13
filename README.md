@@ -1,15 +1,15 @@
 ## Overview
 
 FastAPI application template with a clean configuration system, DI setup, and ready-to-use
-local stack via Docker. The configuration layer uses a repository chain to merge OS
-environment and a secrets directory for secure deployments.
+local stack via Docker. Configuration relies on Pydantic settings that merge secrets
+and environment variables automatically.
 
 ## Features
 
 - FastAPI app factory with health endpoint
 - DI integration (Dishka)
-- Config repository chain (env > secrets)
-- Typed config helpers and project settings
+- Pydantic-based settings (secrets dir > env > defaults)
+- Settings exposed via `configs.settings` or DI
 - Docker Compose for local services (Postgres, Redis, MinIO, PgBouncer)
 
 ## Quick Start
@@ -40,5 +40,5 @@ Preferred usage pattern for settings:
 ```python
 from configs import settings
 
-print(settings.APP_NAME)
+print(settings.app_name)
 ```

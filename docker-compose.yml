@@ -5,9 +5,25 @@ services:
       context: .
       dockerfile: Dockerfile
     image: new-fastapi-template-v1:dev
+    env_file:
+      - .env
     environment:
-      - DEBUG=1
+      - APP_NAME=FastAPI Template
       - APP_ENV=dev
+      - DEBUG=1
+      - PORT=8000
+      - LOG_LEVEL=INFO
+      - ALLOWED_HOSTS=["localhost","127.0.0.1"]
+      - CORS_ORIGINS=[]
+      - DATABASE_URL=postgresql+asyncpg://app:app@db:5432/app
+      - JWT_SECRET_KEY=dev-secret
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRES_MINUTES=30
+      - COOKIE_NAME=session
+      - COOKIE_SECURE=0
+      - COOKIE_SAMESITE=lax
+      - COOKIE_DOMAIN=
+      - COOKIE_PATH=/
       - DB_PGBOUNCER_ENABLED=true
       - DB_PGBOUNCER_DSN=postgresql+asyncpg://app:app@pgbouncer:6432/app
       - DB_DSN=postgresql+asyncpg://app:app@db:5432/app
@@ -19,7 +35,7 @@ services:
       - S3_BUCKET=app-bucket
       - S3_SECURE=false
     ports:
-      - "8001:8000"
+      - "8000:8000"
     depends_on:
       - db
       - redis
