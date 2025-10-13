@@ -1,18 +1,35 @@
 from __future__ import annotations
 
-from .env import env, get_bool, get_int, get_list
+from typing import Any, Optional
 
-# Core app settings
-APP_NAME: str = env("APP_NAME", default="FastAPI Template")
-# Prefer APP_ENV (as in docker-compose), fallback to ENV for compatibility
-APP_ENV: str = env("APP_ENV", default=env("ENV", default="development"))
-ENV: str = APP_ENV  # keep alias for code expecting ENV
-DEBUG: bool = get_bool("DEBUG", default=False)
-PORT: int = get_int("PORT", default=8000)
-LOG_LEVEL: str = env("LOG_LEVEL", default="INFO")
+from pydantic import Field, field_validator
 
-# Networking / CORS
-CORS_ORIGINS: list[str] = get_list("CORS_ORIGINS", default=[])
-ALLOWED_HOSTS: list[str] = get_list("ALLOWED_HOSTS", default=["localhost"])
+from .base import AppSettings, split_comma_separated
 
-__all__ = []
+
+class Settings(AppSettings):
+    """Project configuration values."""
+
+    app_name: str = "FastAPI Template"
+    app_env: str = "development"
+    debug: bool = False
+    port: int = 8000
+    log_level: str = "INFO"
+    cors_origins: list[str] = Field(default_factory=list)
+    allowed_hosts: list[str] = Field(default_factory=lambda: ["localhost"])
+    database_url: str = "sqlite+aiosqlite:///test.db"
+    jwt_secret_key: str = "change-me-in-prod"
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expires_minutes: int = 30
+    cookie_name: str = "session"
+    cookie_secure: bool = False
+    cookie_samesite: str = "lax"
+    cookie_domain: Optional[str] = None
+    cookie_path: str = "/"
+
+    @field_validator("cors_origins", "allowed_hosts", mode="before")
+    @classmethod
+    def _parse_list(cls, value: Any) -> list[str]:
+        return split_comma_separated(value)
+
+settings = Settings()
