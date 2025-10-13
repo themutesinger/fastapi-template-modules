@@ -7,7 +7,7 @@ def create_app() -> FastAPI:
     app = FastAPI()
     setup_di(app)
 
-    from apps.users.views.router import router as users_router
+    from apps.users.router import router as users_router
 
     api_v1 = APIRouter(prefix="/api/v1")
     api_v1.include_router(users_router)

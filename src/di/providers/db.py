@@ -12,7 +12,11 @@ from infra.db import make_engine, make_session_factory
 class DBProvider(Provider):
     @provide(scope=Scope.APP)
     async def engine(self, settings: Settings) -> AsyncIterable[AsyncEngine]:
-        engine = make_engine(settings)
+        url = settings.get_database_url()
+        pool_size = getattr(settings.db, "pool_size", None) if getattr(settings, "db", None) else None
+        max_overflow = getattr(settings.db, "max_overflow", None) if getattr(settings, "db", None) else None
+
+        engine = make_engine(url, echo=settings.debug, pool_size=pool_size, max_overflow=max_overflow)
         try:
             yield engine
         finally:
