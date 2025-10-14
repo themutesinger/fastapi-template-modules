@@ -1,23 +1,7 @@
-from fastapi import FastAPI, APIRouter
+from presentations.api.app import app
 
-from di.container import setup_di
+if __name__ == "__main__":
+    # For local development: python -m src.main or python src/main.py
+    import uvicorn
 
-
-def create_app() -> FastAPI:
-    app = FastAPI()
-    setup_di(app)
-
-    from apps.users.router import router as users_router
-
-    api_v1 = APIRouter(prefix="/api/v1")
-    api_v1.include_router(users_router)
-    app.include_router(api_v1)
-
-    @app.get("/health")
-    async def health() -> dict[str, str]:
-        return {"status": "ok"}
-
-    return app
-
-
-app = create_app()
+    uvicorn.run("presentations.api.app:app", host="0.0.0.0", port=8000, reload=True)

@@ -16,7 +16,7 @@ FROM python:3.12-slim-bookworm AS runtime
 ENV \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app/src
 
 RUN adduser --disabled-password --gecos "" appuser
 
@@ -26,7 +26,7 @@ COPY --from=builder /usr/local/lib/python3.12 /usr/local/lib/python3.12
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # App source and Alembic configuration
-COPY src ./
+COPY src ./src
 # Alembic configuration inside src/infra/db
 COPY alembic.ini ./
 COPY src/infra/db/alembic ./src/infra/db/alembic
@@ -40,6 +40,6 @@ EXPOSE 8000
 
 RUN pip install --no-cache-dir psycopg2-binary
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "presentations.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
 
 

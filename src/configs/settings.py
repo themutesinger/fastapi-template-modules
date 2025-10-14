@@ -92,5 +92,3 @@ class Settings(AppSettings):
             if built:
                 return built
         return self.database_url
-
-settings = Settings()

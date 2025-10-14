@@ -21,8 +21,6 @@ def get_user_service(repo: UserRepository, settings: Settings) -> UserService:
     hasher: PasswordHasher = PBKDF2PasswordHasher(secret_salt=salt_source)
     return UserService(repo, hasher)
 
-
-# Export providers for discovery
 di = [get_user_repository, get_user_service]
 
 
