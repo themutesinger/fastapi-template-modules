@@ -17,7 +17,7 @@ class AppConfig(AppConfig):
         return di
 
     def get_routers(self):
-        from .routers.v1 import router as v1
+        from .api.v1.router import router as v1
         return {"v1": v1}
 
 

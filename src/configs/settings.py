@@ -21,7 +21,7 @@ def split_comma_separated(value: Any) -> List[str]:
 
 
 class Settings(BaseSettings):
-    """Main application configuration (flattened)."""
+    """Main application configuration."""
 
     model_config = SettingsConfigDict(
         case_sensitive=False,
@@ -68,6 +68,7 @@ class Settings(BaseSettings):
     ALLOWED_HOSTS: List[str] = Field(default_factory=list)
 
     DATABASE_URL: Optional[str] = None
+    REDIS_URL: Optional[str] = None
 
     @field_validator("CORS_ORIGINS", "ALLOWED_HOSTS", mode="before")
     @classmethod

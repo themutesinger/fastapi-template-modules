@@ -6,13 +6,13 @@ from dishka import Container, make_async_container
 from dishka.integrations.fastapi import DishkaRoute, FastapiProvider, setup_dishka
 from fastapi import FastAPI
 
-from . import ConfigProvider, DBProvider
+from . import ConfigProvider, DBProvider, RedisProvider
 from apps.appconfig import load_app_configs, discover_app_paths
 
 
 def build_container() -> Container:
     """Assemble DI container from base providers and AppConfig providers."""
-    providers = [ConfigProvider(), DBProvider(), FastapiProvider()]
+    providers = [ConfigProvider(), DBProvider(), RedisProvider(), FastapiProvider()]
 
     app_configs = load_app_configs(discover_app_paths())
     for cfg in app_configs:

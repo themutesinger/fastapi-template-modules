@@ -33,11 +33,20 @@ class AppConfig:
     def get_routers(self) -> Optional[Dict[str, Any]]:
         """Optional map of version -> APIRouter.
 
-        Default implementation falls back to single router under v1 if get_router is provided.
+        Default: try legacy get_router(); else attempt discovery under `api.v*`.
         """
         legacy = self.get_router()
         if legacy is not None:
             return {"v1": legacy}
+        # Attempt simple discovery: import apps.<name>.api.v1.router if exists
+        try:
+            import importlib
+            mod = importlib.import_module(f"{self.name}.api.v1.router")
+            router = getattr(mod, "router", None)
+            if router is not None:
+                return {"v1": router}
+        except Exception:
+            pass
         return None
     def get_exception_handlers(self) -> Optional[Mapping[Type[BaseException], Callable[..., Any]]]:
         """Optional mapping of exception type to handler callables.

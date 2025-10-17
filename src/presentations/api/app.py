@@ -11,6 +11,7 @@ from presentations.api.exception_handlers import get_exception_handlers
 from presentations.api.health import build_readiness
 from dishka.integrations.fastapi import FromDishka
 from sqlalchemy.ext.asyncio import AsyncEngine
+from infra.redis.client import RedisClient
 from fastapi import status as http_status
 
 
@@ -58,8 +59,8 @@ def create_app(container=None) -> FastAPI:
         return {"status": "ok"}
 
     @app.get("/health/ready")
-    async def health_ready(engine: FromDishka[AsyncEngine]):
-        components = await build_readiness(engine)
+    async def health_ready(engine: FromDishka[AsyncEngine], redis_client: FromDishka[RedisClient]):
+        components = await build_readiness(engine, redis_client)
         overall_ok = all(v == "ok" for v in components.values())
         status_code = http_status.HTTP_200_OK if overall_ok else http_status.HTTP_503_SERVICE_UNAVAILABLE
         return {"status": "ok" if overall_ok else "degraded", "components": components}

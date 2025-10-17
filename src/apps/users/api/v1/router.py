@@ -3,7 +3,7 @@ from __future__ import annotations
 from dishka.integrations.fastapi import FromDishka, DishkaRoute
 from fastapi import APIRouter, status
 
-from apps.users.schemas import UserCreate, UserRead
+from apps.users.api.v1.schemas import UserCreate, UserRead
 from apps.users.service import RegisterUserUseCase, GetUserUseCase
 
 
