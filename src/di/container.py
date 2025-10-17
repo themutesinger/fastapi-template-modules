@@ -7,34 +7,30 @@ from dishka.integrations.fastapi import DishkaRoute, FastapiProvider, setup_dish
 from fastapi import FastAPI
 
 from . import ConfigProvider, DBProvider
+from apps.appconfig import load_app_configs, discover_app_paths
 
 
 def build_container() -> Container:
-    """Manually register base providers and module providers here.
+    """Assemble DI container from base providers and AppConfig providers."""
+    providers = [ConfigProvider(), DBProvider(), FastapiProvider()]
 
-    Add app providers explicitly when apps are implemented, e.g.:
-        from apps.users.di import di as users_di
-        from apps.auth.di import di as auth_di
-        return make_async_container(ConfigProvider(), DBProvider(), FastapiProvider(), users_di, auth_di)
-    """
-    # Import app providers explicitly here
-    try:
-        from apps.users.di import di as users_di
-    except Exception:
-        users_di = None
+    app_configs = load_app_configs(discover_app_paths())
+    for cfg in app_configs:
+        provider = cfg.get_provider()
+        if provider is not None:
+            providers.append(provider)
 
-    providers = [
-        ConfigProvider(),
-        DBProvider(),
-        FastapiProvider(),
-    ]
-    if users_di is not None:
-        providers.append(users_di)
     return make_async_container(*providers)
 
 
-def setup_di(app: FastAPI) -> Container:
-    container = build_container()
+def setup_di(app: FastAPI, container: Container | None = None) -> Container:
+    """Attach Dishka container to FastAPI app.
+
+    If an external container is provided (e.g., in tests), it will be used as-is.
+    Otherwise, a default container will be built.
+    """
+    if container is None:
+        container = build_container()
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):

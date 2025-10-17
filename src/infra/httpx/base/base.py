@@ -1,9 +1,11 @@
 from __future__ import annotations
 import asyncio
+import logging
 import httpx
 from typing import Any, Dict, Optional
 
 from infra.httpx import ApiNetworkError, ApiHTTPError
+from infra.logging import get_trace_id
 
 
 class BaseApiClient:
@@ -18,6 +20,7 @@ class BaseApiClient:
         self.base_url = base_url.rstrip("/")
         self.headers = headers or {}
         self.client = httpx.AsyncClient(base_url=self.base_url, timeout=self.timeout)
+        self._logger = logging.getLogger(self.__class__.__name__)
 
     async def close(self) -> None:
         await self.client.aclose()
@@ -33,6 +36,9 @@ class BaseApiClient:
     ) -> Any:
         url = endpoint if endpoint.startswith("http") else f"{self.base_url}{endpoint}"
         req_headers = {**self.headers, **(headers or {})}
+        # propagate trace id into outbound request
+        trace_id = get_trace_id()
+        req_headers.setdefault("X-Request-ID", trace_id)
         delay = self.retry_initial_delay
 
         for attempt in range(1, self.max_retries + 1):
@@ -41,8 +47,16 @@ class BaseApiClient:
                 client = httpx.AsyncClient(base_url=self.base_url, timeout=self.timeout)
 
             try:
+                self._logger.info(
+                    "HTTP %s %s", method, url,
+                    extra={"trace": trace_id}
+                )
                 resp = await client.request(
                     method, url, params=params, json=json, headers=req_headers
+                )
+                self._logger.info(
+                    "HTTP %s %s -> %s", method, url, resp.status_code,
+                    extra={"trace": trace_id}
                 )
                 resp.raise_for_status()
                 if "application/json" in resp.headers.get("Content-Type", ""):
