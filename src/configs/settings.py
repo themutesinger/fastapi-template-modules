@@ -88,6 +88,11 @@ class Settings(BaseSettings):
     S3_SECURE: bool = True
     S3_USE_PATH_STYLE: bool = True
 
+    # Pagination defaults
+    PAGINATION_DEFAULT_PAGE: int = 1
+    PAGINATION_DEFAULT_PAGE_SIZE: int = 20
+    PAGINATION_MAX_PAGE_SIZE: int = 100
+
     @field_validator("CORS_ORIGINS", "ALLOWED_HOSTS", mode="before")
     @classmethod
     def _parse_list(cls, value: Any) -> List[str]:

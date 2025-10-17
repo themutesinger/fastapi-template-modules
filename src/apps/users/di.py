@@ -7,7 +7,7 @@ from di.providers.security import PBKDF2PasswordHasher
 from infra.db.transaction import TransactionManager
 
 from .repository import UserRepository
-from .service import RegisterUserUseCase, GetUserUseCase
+from .service import RegisterUserUseCase, GetUserUseCase, ListUsersUseCase
 
 
 class UsersProvider(Provider):
@@ -26,6 +26,10 @@ class UsersProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_user_usecase(self, repo: UserRepository) -> GetUserUseCase:
         return GetUserUseCase(repo)
+
+    @provide(scope=Scope.REQUEST)
+    def list_users_usecase(self, repo: UserRepository) -> ListUsersUseCase:
+        return ListUsersUseCase(repo)
 
 
 di = UsersProvider()

@@ -38,6 +38,14 @@ class GetUserUseCase:
         return user
 
 
+class ListUsersUseCase:
+    def __init__(self, repo: UserRepository) -> None:
+        self._repo = repo
+
+    async def execute(self, *, page: int, page_size: int):
+        return await self._repo.paginate(page=page, page_size=page_size)
+
+
 
 
 

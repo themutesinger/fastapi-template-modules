@@ -53,6 +53,7 @@ class BaseRepository(Generic[ModelT]):
         page_size: int,
         where: Optional[object] = None,
         order_by: Optional[Sequence[object]] = None,
+        sort: Optional[str] = None,
     ) -> tuple[list[ModelT], int]:
         if page < 1:
             page = 1
@@ -60,7 +61,24 @@ class BaseRepository(Generic[ModelT]):
         base = select(self._model)
         if where is not None:
             base = base.where(where)
-        if order_by:
+        # Parse sort like "field:asc,other:desc" using model columns
+        if sort:
+            cols: list[object] = []
+            for part in sort.split(","):
+                part = part.strip()
+                if not part:
+                    continue
+                if ":" in part:
+                    name, direction = part.split(":", 1)
+                else:
+                    name, direction = part, "asc"
+                col = getattr(self._model, name, None)
+                if col is None:
+                    continue
+                cols.append(col.asc() if direction.lower() == "asc" else col.desc())
+            if cols:
+                base = base.order_by(*cols)
+        elif order_by:
             base = base.order_by(*order_by)
 
         data_result = await self._session.execute(base.offset(offset).limit(page_size))

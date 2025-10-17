@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from dishka.integrations.fastapi import FromDishka, DishkaRoute
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Query, Request
 
 from apps.users.api.v1.schemas import UserCreate, UserRead
-from apps.users.service import RegisterUserUseCase, GetUserUseCase
+from apps.users.service import RegisterUserUseCase, GetUserUseCase, ListUsersUseCase
+from apps.users.models import User
+from presentations.api.schemas.common import PaginatedResponse, PaginationParams
+from presentations.api.schemas.common import PaginatedResponse
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -25,4 +28,19 @@ async def get_user(user_id: int, usecase: FromDishka[GetUserUseCase]):
     user = await usecase.execute(user_id)
     return UserRead.model_validate(user)
 
+
+@router.get("/", response_model=PaginatedResponse[UserRead])
+async def list_users(
+    request: Request,
+    pagination: FromDishka[PaginationParams],
+    usecase: FromDishka[ListUsersUseCase] = None,
+):
+    items, total = await usecase.execute(page=pagination.page, page_size=pagination.page_size)
+    return PaginatedResponse[UserRead].from_request(
+        request,
+        results=items,
+        total=total,
+        page=pagination.page,
+        page_size=pagination.page_size,
+    )
 

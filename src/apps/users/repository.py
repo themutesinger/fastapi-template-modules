@@ -18,7 +18,7 @@ class UserRepository(BaseRepository[User]):
 
     async def add(self, email: str, hashed_password: str) -> User:
         user = User(email=email, hashed_password=hashed_password)
-        return await self.add(user)
+        return await super().add(user)
 
     async def get_by_id(self, user_id: int) -> Optional[User]:
         return await super().get_by_id(user_id)

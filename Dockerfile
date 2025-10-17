@@ -5,11 +5,7 @@ RUN pip install --no-cache-dir uv --user
 COPY pyproject.toml uv.lock* ./
 
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
-RUN if [ -f uv.lock ]; then \
-      /root/.local/bin/uv sync --frozen --no-dev --no-install-project --no-install-workspace --no-cache; \
-    else \
-      /root/.local/bin/uv sync --no-dev --no-install-project --no-install-workspace --no-cache; \
-    fi
+RUN /root/.local/bin/uv sync --no-dev --no-install-project --no-install-workspace --no-cache
 
 FROM python:3.12-slim-bookworm AS runtime
 
