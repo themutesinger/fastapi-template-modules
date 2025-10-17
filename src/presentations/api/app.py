@@ -4,6 +4,7 @@ from apps.appconfig import load_app_configs, discover_app_paths
 
 from di.container import setup_di
 from configs.logging import configure_logging
+from infra.observability.bootstrap import init_observability
 from infra.logging import TraceIdFilter  # noqa: F401  # ensure import path is resolvable for dictConfig
 from presentations.api.middlewares.trace import trace_id_middleware
 from presentations.api.middlewares.locale import locale_middleware
@@ -12,6 +13,7 @@ from presentations.api.health import build_readiness
 from dishka.integrations.fastapi import FromDishka
 from sqlalchemy.ext.asyncio import AsyncEngine
 from infra.redis.client import RedisClient
+from infra.storage.client import StorageClient
 from fastapi import status as http_status
 
 
@@ -20,7 +22,8 @@ def create_app(container=None) -> FastAPI:
     # Initialize logging early using settings.LOG_LEVEL
     try:
         from configs import settings as app_settings
-        configure_logging(app_settings.LOG_LEVEL)
+        # Initialize observability (logging + sentry)
+        init_observability(app_settings)
     except Exception:
         # Fallback to default INFO if settings are not ready yet
         configure_logging("INFO")
@@ -59,8 +62,12 @@ def create_app(container=None) -> FastAPI:
         return {"status": "ok"}
 
     @app.get("/health/ready")
-    async def health_ready(engine: FromDishka[AsyncEngine], redis_client: FromDishka[RedisClient]):
-        components = await build_readiness(engine, redis_client)
+    async def health_ready(
+        engine: FromDishka[AsyncEngine],
+        redis_client: FromDishka[RedisClient],
+        storage: FromDishka[StorageClient],
+    ):
+        components = await build_readiness(engine, redis_client, storage)
         overall_ok = all(v == "ok" for v in components.values())
         status_code = http_status.HTTP_200_OK if overall_ok else http_status.HTTP_503_SERVICE_UNAVAILABLE
         return {"status": "ok" if overall_ok else "degraded", "components": components}

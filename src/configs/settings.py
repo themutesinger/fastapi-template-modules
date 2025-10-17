@@ -70,6 +70,24 @@ class Settings(BaseSettings):
     DATABASE_URL: Optional[str] = None
     REDIS_URL: Optional[str] = None
 
+    # Sentry / Observability
+    SENTRY_ENABLED: bool = False
+    SENTRY_DSN: Optional[str] = None
+    SENTRY_ENV: Optional[str] = None  # defaults to APP_ENV if not set
+    SENTRY_RELEASE: Optional[str] = None
+    SENTRY_TRACES_SAMPLE_RATE: float = 0.0
+    SENTRY_PROFILES_SAMPLE_RATE: float = 0.0
+    SENTRY_SEND_PII: bool = False
+
+    # S3 / Storage
+    S3_ENDPOINT_URL: Optional[str] = None
+    S3_ACCESS_KEY: Optional[str] = None
+    S3_SECRET_KEY: Optional[str] = None
+    S3_REGION: Optional[str] = None
+    S3_BUCKET: Optional[str] = None
+    S3_SECURE: bool = True
+    S3_USE_PATH_STYLE: bool = True
+
     @field_validator("CORS_ORIGINS", "ALLOWED_HOSTS", mode="before")
     @classmethod
     def _parse_list(cls, value: Any) -> List[str]:

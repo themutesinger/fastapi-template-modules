@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Generic, Iterable, Optional, Type, TypeVar
+from typing import Generic, Iterable, Optional, Type, TypeVar, Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 
@@ -36,5 +36,41 @@ class BaseRepository(Generic[ModelT]):
 
     async def delete(self, instance: ModelT) -> None:
         await self._session.delete(instance)
+
+    async def filter_by(self, **kwargs) -> Iterable[ModelT]:
+        result = await self._session.execute(select(self._model).filter_by(**kwargs))
+        return list(result.scalars().all())
+
+    async def exists(self, **kwargs) -> bool:
+        stmt = select(func.count()).select_from(self._model).filter_by(**kwargs)
+        result = await self._session.execute(stmt)
+        return (result.scalar_one() or 0) > 0
+
+    async def paginate(
+        self,
+        *,
+        page: int,
+        page_size: int,
+        where: Optional[object] = None,
+        order_by: Optional[Sequence[object]] = None,
+    ) -> tuple[list[ModelT], int]:
+        if page < 1:
+            page = 1
+        offset = (page - 1) * page_size
+        base = select(self._model)
+        if where is not None:
+            base = base.where(where)
+        if order_by:
+            base = base.order_by(*order_by)
+
+        data_result = await self._session.execute(base.offset(offset).limit(page_size))
+        items = list(data_result.scalars().all())
+
+        count_stmt = select(func.count()).select_from(self._model)
+        if where is not None:
+            count_stmt = count_stmt.where(where)
+        count_result = await self._session.execute(count_stmt)
+        total = int(count_result.scalar_one() or 0)
+        return items, total
 
 

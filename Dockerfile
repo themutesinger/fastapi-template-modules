@@ -38,7 +38,12 @@ USER appuser
 
 EXPOSE 8000
 
+# Runtime-only extras
 RUN pip install --no-cache-dir psycopg2-binary
+
+# Optional: preinstall dev deps when tests profile is used (kept lightweight here)
+# To speed up tests service, uncomment next line to bake pytest into the image
+# RUN pip install --no-cache-dir pytest pytest-asyncio
 
 CMD ["uvicorn", "presentations.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
 

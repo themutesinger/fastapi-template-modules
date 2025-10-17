@@ -6,6 +6,25 @@ import os
 from typing import Dict, Any
 
 
+class _JsonFormatter(logging.Formatter):
+    def format(self, record: logging.LogRecord) -> str:  # type: ignore[override]
+        # Build a minimal JSON line without extra deps
+        payload: Dict[str, Any] = {
+            "ts": self.formatTime(record, "%Y-%m-%d %H:%M:%S"),
+            "level": record.levelname,
+            "logger": record.name,
+            "trace": getattr(record, "trace_id", "-"),
+            "msg": record.getMessage(),
+        }
+        return ("{"
+                f"\"ts\":\"{payload['ts']}\"," 
+                f"\"level\":\"{payload['level']}\"," 
+                f"\"logger\":\"{payload['logger']}\"," 
+                f"\"trace\":\"{payload['trace']}\"," 
+                f"\"msg\":\"{payload['msg'].replace('\\', '\\\\').replace('"', '\\"')}\""
+                "}")
+
+
 def configure_logging(log_level: str | None = None) -> None:
     level_name = (log_level or os.getenv("LOG_LEVEL") or "INFO").upper()
 
@@ -16,12 +35,18 @@ def configure_logging(log_level: str | None = None) -> None:
     # The trace id value is expected to be injected by a custom filter later if configured
     base_format = "%(asctime)s | %(levelname)s | %(name)s | trace=%(trace_id)s | %(message)s"
 
+    is_prod = (os.getenv("APP_ENV", "").lower() in ("prod", "production"))
+
     dict_config: Dict[str, Any] = {
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
             "standard": {
                 "format": base_format,
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+            },
+            "json": {
+                "()": _JsonFormatter,
                 "datefmt": "%Y-%m-%d %H:%M:%S",
             },
             # Uvicorn has its own loggers; align formatting for consistency
@@ -39,7 +64,7 @@ def configure_logging(log_level: str | None = None) -> None:
         "handlers": {
             "console": {
                 "class": "logging.StreamHandler",
-                "formatter": "standard",
+                "formatter": "json" if is_prod else "standard",
                 "filters": ["with_trace"],
                 "level": numeric_level,
             },
