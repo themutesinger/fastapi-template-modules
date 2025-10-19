@@ -18,15 +18,25 @@ from fastapi import status as http_status
 
 
 def create_app(container=None) -> FastAPI:
-    app = FastAPI()
-    # Initialize logging early using settings.LOG_LEVEL
+    # Prepare settings and observability first to derive app metadata
+    app_title = "FastAPI Application"
     try:
         from configs import settings as app_settings
+        app_title = app_settings.APP_NAME
         # Initialize observability (logging + sentry)
         init_observability(app_settings)
     except Exception:
         # Fallback to default INFO if settings are not ready yet
         configure_logging("INFO")
+
+    # Enable OpenAPI + Swagger UI + ReDoc explicitly
+    app = FastAPI(
+        title=app_title,
+        version="1.0.0",
+        openapi_url="/openapi.json",
+        docs_url="/docs",
+        redoc_url="/redoc",
+    )
 
     setup_di(app, container=container)
 

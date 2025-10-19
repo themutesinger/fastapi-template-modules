@@ -93,6 +93,9 @@ class Settings(BaseSettings):
     PAGINATION_DEFAULT_PAGE_SIZE: int = 20
     PAGINATION_MAX_PAGE_SIZE: int = 100
 
+    # External APIs
+    JSONPLACEHOLDER_BASE_URL: str = "https://jsonplaceholder.typicode.com"
+
     @field_validator("CORS_ORIGINS", "ALLOWED_HOSTS", mode="before")
     @classmethod
     def _parse_list(cls, value: Any) -> List[str]:

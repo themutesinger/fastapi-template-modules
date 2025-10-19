@@ -89,9 +89,15 @@ def configure_logging(log_level: str | None = None) -> None:
                 "level": numeric_level,
                 "propagate": False,
             },
+            "sqlalchemy.engine": {
+                "handlers": ["console"],
+                "level": "WARNING",
+                "propagate": False,
+            },
+            "sqlalchemy.pool": {
+                "handlers": ["console"],
+                "level": "WARNING",
+                "propagate": False,
+            },
         },
     }
-
-    logging.config.dictConfig(dict_config)
-
-

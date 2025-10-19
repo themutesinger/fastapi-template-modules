@@ -13,7 +13,6 @@ class PaginationProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def pagination_params(self, request: Request, settings: Settings) -> PaginationParams:
         qp = request.query_params
-        # Defaults from settings with max cap
         default_page = settings.PAGINATION_DEFAULT_PAGE
         default_page_size = settings.PAGINATION_DEFAULT_PAGE_SIZE
         max_page_size = settings.PAGINATION_MAX_PAGE_SIZE

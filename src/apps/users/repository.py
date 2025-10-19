@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Optional
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from sqlalchemy import select, text
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from .models import User
 from infra.db.repository import BaseRepository
@@ -30,15 +30,6 @@ class UserRepository(BaseRepository[User]):
 
     async def list_all(self) -> Iterable[User]:
         return await super().list_all()
-
-    async def ping_db(self, session: AsyncSession) -> bool:
-        try:
-            await session.execute(text("SELECT 1"))
-            return True
-        except Exception:
-            return False
-
-
 
 
 

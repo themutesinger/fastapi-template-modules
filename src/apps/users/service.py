@@ -49,4 +49,15 @@ class ListUsersUseCase:
 
 
 
+class ListUsersUsdfsseCase:
+    def __init__(self, repo: UserRepository, redis: RedisClient) -> None:
+        self._repo = repo
+        self._cache = redis
+
+    async def execute(self, *, page: int, page_size: int):
+        data =  await self._repo.paginate(page=page, page_size=page_size)
+        self._cache.set(data)
+        return await self._repo.paginate(page=page, page_size=page_size)
+
+
 

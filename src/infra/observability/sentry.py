@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional
+import json
 
 import sentry_sdk
 from sentry_sdk.integrations.fastapi import FastApiIntegration
@@ -9,6 +10,8 @@ from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from infra.errors import BaseError
 from infra.logging import get_trace_id
+from infra.httpx.base.exceptions import ApiHTTPError
+from infra.security.redaction import Redactor, RedactionLevel
 
 
 def init_sentry(settings) -> None:
@@ -20,6 +23,37 @@ def init_sentry(settings) -> None:
         if exc_info and isinstance(exc_info[1], BaseError):
             # Drop domain/business errors
             return None
+        # Enrich ApiHTTPError with safe httpx response snippet
+        if exc_info and isinstance(exc_info[1], ApiHTTPError):
+            exc: ApiHTTPError = exc_info[1]
+            extra = event.setdefault("extra", {})
+            try:
+                url = str(exc.response.request.url) if exc.response and exc.response.request else None
+            except Exception:
+                url = None
+            content_type = None
+            try:
+                content_type = exc.response.headers.get("Content-Type") if exc.response else None
+            except Exception:
+                pass
+
+            extra["httpx_status"] = exc.status_code
+            if url:
+                extra["httpx_url"] = url
+
+            # Only attach text/json bodies
+            if content_type and (content_type.startswith("application/json") or content_type.startswith("text/")):
+                body = exc.body or ""
+                # Attempt light redaction for JSON payloads
+                if content_type.startswith("application/json"):
+                    try:
+                        data = json.loads(body)
+                        redacted = Redactor.redact(data, level=RedactionLevel.STRICT)
+                        body = json.dumps(redacted, ensure_ascii=False)
+                    except Exception:
+                        # fall back to raw body
+                        pass
+                extra["httpx_response_body"] = Redactor.shorten(body, 2048)
         # Inject trace_id tag if missing
         event.setdefault("tags", {})["trace_id"] = get_trace_id()
         return event
