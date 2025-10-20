@@ -1,7 +1,7 @@
 
-from typing import Callable
-
 from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.types import ASGIApp
 
 from infra.i18n import clear_locale, set_locale
 
@@ -16,14 +16,23 @@ def _pick_language(value: str | None) -> str:
     return value.split(",", 1)[0].strip() or "en"
 
 
-async def locale_middleware(request: Request, call_next: Callable[[Request], Response]) -> Response:
-    lang = _pick_language(request.headers.get(HEADER))
-    set_locale(lang)
-    try:
-        response = await call_next(request)
-    finally:
-        clear_locale()
-    return response
+class LocaleMiddleware(BaseHTTPMiddleware):
+    """Set the current locale for the lifetime of the request."""
 
+    def __init__(self, app: ASGIApp, *, header: str = HEADER) -> None:
+        super().__init__(app)
+        self.header = header
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:  # type: ignore[override]
+        lang = _pick_language(request.headers.get(self.header))
+        set_locale(lang)
+        try:
+            response = await call_next(request)
+        finally:
+            clear_locale()
+        return response
+
+
+__all__ = ["LocaleMiddleware"]
 
 

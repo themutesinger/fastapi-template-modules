@@ -1,9 +1,10 @@
 
 import logging
 import uuid
-from typing import Callable
 
 from fastapi import Request, Response
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.types import ASGIApp
 
 from infra.logging import clear_trace_id, set_trace_id
 
@@ -11,27 +12,47 @@ from infra.logging import clear_trace_id, set_trace_id
 logger = logging.getLogger(__name__)
 
 
-TRACE_HEADER_INBOUND = "X-Request-ID"
-TRACE_HEADER_OUTBOUND = "X-Request-ID"
+class TraceIdMiddleware(BaseHTTPMiddleware):
+    """Attach a request trace identifier to logs and responses."""
+
+    DEFAULT_HEADER = "X-Request-ID"
+
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        inbound_header: str | None = None,
+        outbound_header: str | None = None,
+    ) -> None:
+        super().__init__(app)
+        self.inbound_header = inbound_header or self.DEFAULT_HEADER
+        self.outbound_header = outbound_header or self.inbound_header
+
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:  # type: ignore[override]
+        inbound_id = request.headers.get(self.inbound_header)
+        trace_id = inbound_id or uuid.uuid4().hex
+
+        set_trace_id(trace_id)
+        try:
+            response = await call_next(request)
+        finally:
+            clear_trace_id()
+
+        self._set_response_headers(response, trace_id)
+        return response
+
+    def _set_response_headers(self, response: Response, trace_id: str) -> None:
+        response.headers[self.outbound_header] = trace_id
+
+        expose_header = response.headers.get("Access-Control-Expose-Headers")
+        if not expose_header:
+            response.headers["Access-Control-Expose-Headers"] = self.outbound_header
+            return
+
+        exposed = {value.strip() for value in expose_header.split(",") if value.strip()}
+        if self.outbound_header not in exposed:
+            exposed.add(self.outbound_header)
+            response.headers["Access-Control-Expose-Headers"] = ", ".join(sorted(exposed))
 
 
-async def trace_id_middleware(request: Request, call_next: Callable[[Request], Response]) -> Response:
-    # Prefer inbound header if present; otherwise generate a UUID4
-    inbound_id = request.headers.get(TRACE_HEADER_INBOUND)
-    trace_id = inbound_id or uuid.uuid4().hex
-
-    set_trace_id(trace_id)
-    try:
-        response = await call_next(request)
-    finally:
-        # Always clear context to avoid leaking between requests on same worker
-        clear_trace_id()
-
-    # Reflect the id back to the client and expose it for browsers
-    response.headers[TRACE_HEADER_OUTBOUND] = trace_id
-    response.headers.setdefault("Access-Control-Expose-Headers", TRACE_HEADER_OUTBOUND)
-
-    return response
-
-
-
+__all__ = ["TraceIdMiddleware"]
