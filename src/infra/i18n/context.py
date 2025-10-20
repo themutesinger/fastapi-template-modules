@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import contextvars
 from typing import Optional

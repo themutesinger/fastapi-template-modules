@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from .logging_bridge import init_logging
 from .sentry import init_sentry

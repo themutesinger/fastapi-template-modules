@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase, declared_attr

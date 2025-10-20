@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker

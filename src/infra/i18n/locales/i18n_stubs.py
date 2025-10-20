@@ -2,14 +2,19 @@
 from gettext import gettext as _
 
 
+_("access_denied")
+_("authentication_failed")
+_("bad_request")
 _("conflict")
 _("external_api_error")
 _("external_http_error")
 _("external_network_error")
 _("external_service_error")
+_("insufficient_permissions")
 _("invalid")
+_("invalid_credentials")
 _("not_found")
 _("resource_not_found")
+_("unique")
 _("user_exists")
 _("validation_failed")
-_("internal_error")

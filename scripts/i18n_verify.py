@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from infra.i18n.manage import DEFAULT_LOCALES_DIR, verify_translations
 

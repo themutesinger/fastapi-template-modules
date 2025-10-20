@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from typing import AsyncIterable
 
@@ -25,13 +24,12 @@ class StorageProvider(Provider):
             access_key=settings.S3_ACCESS_KEY,
             secret_key=settings.S3_SECRET_KEY,
             region=settings.S3_REGION,
-            use_ssl=bool(settings.S3_SECURE),
-            use_path_style=bool(settings.S3_USE_PATH_STYLE),
+            use_ssl=settings.S3_SECURE,
+            use_path_style=settings.S3_USE_PATH_STYLE,
             bucket=settings.S3_BUCKET,
         )
         try:
             yield client
         finally:
             await client.close()
-
 

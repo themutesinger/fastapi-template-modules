@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from infra.i18n.manage import collect_error_keys, write_registry, DEFAULT_REGISTRY_PATH
 

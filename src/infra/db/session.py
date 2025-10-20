@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 

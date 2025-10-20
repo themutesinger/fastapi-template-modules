@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import ast
 import json
@@ -9,7 +8,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 SRC_ROOT = PROJECT_ROOT / "src"
 DEFAULT_LOCALES_DIR = PROJECT_ROOT / "src/infra/i18n/locales"
 DEFAULT_REGISTRY_PATH = DEFAULT_LOCALES_DIR / ".i18n_keys.json"
-DEFAULT_STUB_PATH = PROJECT_ROOT / "locales/i18n_stubs.py"
+# Keep stubs within src so Babel and runtime imports are consistent
+DEFAULT_STUB_PATH = PROJECT_ROOT / "src/infra/i18n/locales/i18n_stubs.py"
 
 
 class _ErrorKeyCollector(ast.NodeVisitor):

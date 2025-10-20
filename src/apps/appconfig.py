@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from typing import Any, Iterable, Optional, Protocol, Mapping, Callable, Type, Dict
 import pkgutil

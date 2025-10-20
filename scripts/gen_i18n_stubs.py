@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from infra.i18n.manage import DEFAULT_REGISTRY_PATH, DEFAULT_STUB_PATH, generate_stub, load_registry
 

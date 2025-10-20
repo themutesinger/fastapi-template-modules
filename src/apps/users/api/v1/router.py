@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from dishka.integrations.fastapi import FromDishka, DishkaRoute
 from fastapi import APIRouter, status, Query, Request, Depends

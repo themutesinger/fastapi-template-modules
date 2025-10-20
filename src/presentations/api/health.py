@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import asyncio
 from typing import Dict
@@ -30,9 +29,8 @@ async def check_redis(redis_client: RedisClient) -> str:
 
 async def check_storage(storage: StorageClient) -> str:
     try:
-        # head bucket via exists on a dummy key pattern is expensive; instead try list with max-keys=0 (not available easily here)
-        # As a light check, just return ok if client could initialize resource (already ensured); real checks can be added later
-        return "ok"
+        exists = await storage.bucket_exists()
+        return "ok" if exists else "down"
     except Exception:
         return "down"
 
@@ -57,5 +55,4 @@ async def build_readiness(
         names.append("storage")
     results = await asyncio.gather(*tasks)
     return {name: status for name, status in zip(names, results)}
-
 

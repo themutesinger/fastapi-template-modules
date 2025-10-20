@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-10-20 07:12+0600\n"
+"POT-Creation-Date: 2025-10-20 10:06+0600\n"
 "PO-Revision-Date: 2025-10-20 07:05+0600\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,43 +19,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: locales/i18n_stubs.py:5
+#: src/infra/i18n/locales/i18n_stubs.py:5
+msgid "access_denied"
+msgstr "Доступ запрещен"
+
+#: src/infra/i18n/locales/i18n_stubs.py:6
+msgid "authentication_failed"
+msgstr "Аутентификация не удалась"
+
+#: src/infra/i18n/locales/i18n_stubs.py:7
+msgid "bad_request"
+msgstr "Некорректный запрос"
+
+#: src/infra/i18n/locales/i18n_stubs.py:8
 msgid "conflict"
 msgstr "Конфликт"
 
-#: locales/i18n_stubs.py:6
+#: src/infra/i18n/locales/i18n_stubs.py:9
 msgid "external_api_error"
 msgstr "Ошибка внешнего API"
 
-#: locales/i18n_stubs.py:7
+#: src/infra/i18n/locales/i18n_stubs.py:10
 msgid "external_http_error"
 msgstr "Внешняя HTTP-ошибка"
 
-#: locales/i18n_stubs.py:8
+#: src/infra/i18n/locales/i18n_stubs.py:11
 msgid "external_network_error"
 msgstr "Сетевая ошибка во внешнем сервисе"
 
-#: locales/i18n_stubs.py:9
+#: src/infra/i18n/locales/i18n_stubs.py:12
 msgid "external_service_error"
 msgstr "Ошибка внешнего сервиса"
 
-#: locales/i18n_stubs.py:10
+#: src/infra/i18n/locales/i18n_stubs.py:13
+msgid "insufficient_permissions"
+msgstr "Недостаточно прав"
+
+#: src/infra/i18n/locales/i18n_stubs.py:14
 msgid "invalid"
 msgstr "Некорректно"
 
-#: locales/i18n_stubs.py:11
+#: src/infra/i18n/locales/i18n_stubs.py:15
+msgid "invalid_credentials"
+msgstr "Неверные учетные данные"
+
+#: src/infra/i18n/locales/i18n_stubs.py:16
 msgid "not_found"
 msgstr "Не найдено"
 
-#: locales/i18n_stubs.py:12
+#: src/infra/i18n/locales/i18n_stubs.py:17
 msgid "resource_not_found"
 msgstr "Ресурс не найден"
 
-#: locales/i18n_stubs.py:13
+#: src/infra/i18n/locales/i18n_stubs.py:18
+msgid "unique"
+msgstr "Нарушение уникальности"
+
+#: src/infra/i18n/locales/i18n_stubs.py:19
 msgid "user_exists"
 msgstr "Пользователь уже существует"
 
-#: locales/i18n_stubs.py:14
+#: src/infra/i18n/locales/i18n_stubs.py:20
 msgid "validation_failed"
 msgstr "Проверка не пройдена"
 

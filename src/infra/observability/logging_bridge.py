@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from configs.logging import configure_logging
 

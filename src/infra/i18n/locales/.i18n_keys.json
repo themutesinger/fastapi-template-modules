@@ -1,12 +1,18 @@
 [
+  "access_denied",
+  "authentication_failed",
+  "bad_request",
   "conflict",
   "external_api_error",
   "external_http_error",
   "external_network_error",
   "external_service_error",
+  "insufficient_permissions",
   "invalid",
+  "invalid_credentials",
   "not_found",
   "resource_not_found",
+  "unique",
   "user_exists",
   "validation_failed"
 ]
