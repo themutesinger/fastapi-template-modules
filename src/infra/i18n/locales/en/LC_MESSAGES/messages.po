@@ -1,0 +1,60 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-10-20 07:12+0600\n"
+"PO-Revision-Date: 2025-10-20 07:05+0600\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: locales/i18n_stubs.py:5
+msgid "conflict"
+msgstr "Conflict"
+
+#: locales/i18n_stubs.py:6
+msgid "external_api_error"
+msgstr "External API error"
+
+#: locales/i18n_stubs.py:7
+msgid "external_http_error"
+msgstr "External HTTP error"
+
+#: locales/i18n_stubs.py:8
+msgid "external_network_error"
+msgstr "External network error"
+
+#: locales/i18n_stubs.py:9
+msgid "external_service_error"
+msgstr "External service error"
+
+#: locales/i18n_stubs.py:10
+msgid "invalid"
+msgstr "Invalid"
+
+#: locales/i18n_stubs.py:11
+msgid "not_found"
+msgstr "Not found"
+
+#: locales/i18n_stubs.py:12
+msgid "resource_not_found"
+msgstr "Resource not found"
+
+#: locales/i18n_stubs.py:13
+msgid "user_exists"
+msgstr "User already exists"
+
+#: locales/i18n_stubs.py:14
+msgid "validation_failed"
+msgstr "Validation failed"
+

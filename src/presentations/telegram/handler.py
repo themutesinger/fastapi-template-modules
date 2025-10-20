@@ -20,5 +20,3 @@ async def handle_command(cmd: str, args: Dict[str, Any] | None = None) -> str:
     if cmd == "/ping":
         return format_text_success("ok", {"pong": True})
     raise BaseError(detail=f"Unknown command: {cmd}")
-
-

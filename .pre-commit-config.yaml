@@ -28,4 +28,8 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
-
+      - id: i18n-verify
+        name: i18n verify
+        entry: uv run python scripts/i18n_verify.py
+        language: system
+        pass_filenames: false

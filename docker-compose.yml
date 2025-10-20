@@ -33,6 +33,8 @@ services:
       - S3_REGION=us-east-1
       - S3_BUCKET=app-bucket
       - S3_SECURE=false
+      - SENTRY_ENABLED=1
+      - SENTRY_DSN=https://230de46516c39c995ddbbded8507865a@sentry.mdigital.kg/114
     ports:
       - "8000:8000"
     healthcheck:
@@ -41,6 +43,8 @@ services:
       timeout: 2s
       retries: 3
       start_period: 15s
+    volumes:
+      - ./src:/app/src
     depends_on:
       - db
       - redis

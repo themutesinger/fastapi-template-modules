@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from dishka.integrations.fastapi import FromDishka, DishkaRoute
-from fastapi import APIRouter, status, Query, Request
+from fastapi import APIRouter, status, Query, Request, Depends
 
 from apps.users.api.v1.schemas import UserCreate, UserRead
 from apps.users.service import RegisterUserUseCase, GetUserUseCase, ListUsersUseCase
-from apps.users.models import User
 from presentations.api.schemas.common import PaginatedResponse, PaginationParams
 
 
@@ -21,7 +20,6 @@ async def create_user(
     user = await usecase.execute(email=payload.email, password=payload.password)
     return user
 
-
 @router.get("/{user_id}", response_model=UserRead)
 async def get_user(user_id: int, usecase: FromDishka[GetUserUseCase]):
     user = await usecase.execute(user_id)
@@ -32,6 +30,7 @@ async def get_user(user_id: int, usecase: FromDishka[GetUserUseCase]):
 async def list_users(
     request: Request,
     pagination: FromDishka[PaginationParams],
+    _: None = Depends(PaginationParams), # only for annotation
     usecase: FromDishka[ListUsersUseCase] = None,
 ):
     items, total = await usecase.execute(page=pagination.page, page_size=pagination.page_size)

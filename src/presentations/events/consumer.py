@@ -26,5 +26,3 @@ async def handle_event(event: Dict[str, Any]) -> Dict[str, Any]:
         logger.exception("Unexpected error while handling event")
         err = BaseError(detail=str(exc))
         return to_event_error(err)
-
-

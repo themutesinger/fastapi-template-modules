@@ -30,6 +30,8 @@ dependencies = [
 [dependency-groups]
 dev = [
     "bandit>=1.8.6",
+    "Babel>=2.15.0",
+    "invoke>=2.2.0",
     "black>=25.1.0",
     "mypy>=1.17.1",
     "pip-audit>=2.9.0",
@@ -83,6 +85,5 @@ filterwarnings = [
 
 [tool.bandit]
 skips = ["B101"]
-
 
 

@@ -6,8 +6,7 @@ from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from configs import Settings
-from infra.db import make_engine, make_session_factory
-from infra.db.transaction import TransactionManager
+from infra.db import make_engine, make_session_factory, TransactionManager
 
 
 

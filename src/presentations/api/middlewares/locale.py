@@ -27,3 +27,4 @@ async def locale_middleware(request: Request, call_next: Callable[[Request], Res
     return response
 
 
+

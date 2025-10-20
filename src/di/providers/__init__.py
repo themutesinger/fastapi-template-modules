@@ -4,6 +4,7 @@ from .redis import RedisProvider
 from .storage import StorageProvider
 from .pagination import PaginationProvider
 from .http_clients import HttpClientsProvider
+from .security import SecurityProvider
 
 __all__ = [
     "ConfigProvider",
@@ -12,4 +13,5 @@ __all__ = [
     "StorageProvider",
     "PaginationProvider",
     "HttpClientsProvider",
+    "SecurityProvider",
 ]

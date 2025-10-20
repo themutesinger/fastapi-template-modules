@@ -1,16 +1,19 @@
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, List, Mapping, Tuple, Type
 
 from fastapi import HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
+import sentry_sdk
 
 from infra.i18n import translate
 from infra.errors import BaseError, to_http_response
 from presentations.api.schemas.common import ErrorItem
 
+logger = logging.getLogger(__name__)
 
 def _response(message_key: str, errors: List[ErrorItem], status_code: int) -> JSONResponse:
     return JSONResponse(
@@ -24,7 +27,8 @@ def _response(message_key: str, errors: List[ErrorItem], status_code: int) -> JS
 
 async def handle_http_exception(request: Request, exc: HTTPException) -> JSONResponse:  # type: ignore[override]
     status = exc.status_code
-    detail = str(exc.detail) if exc.detail is not None else ""
+    # Never propagate original detail to clients to avoid leaking upstream/internal info
+    detail = ""
 
     mapping: Dict[int, Tuple[str, str]] = {
         400: ("bad_request", "invalid"),
@@ -35,7 +39,9 @@ async def handle_http_exception(request: Request, exc: HTTPException) -> JSONRes
         409: ("conflict", "unique"),
     }
     msg_key, code = mapping.get(status, ("validation_failed", "invalid"))
-    error = ErrorItem(code=code, detail=detail or translate(code))
+    # Deliberately avoid fallback to the raw detail to prevent leaking upstream messages
+    error_detail = translate(code)
+    error = ErrorItem(code=code, detail=error_detail)
     return _response(msg_key, [error], status)
 
 
@@ -70,7 +76,7 @@ def _flatten_errors(errors: List[Mapping[str, Any]]) -> List[ErrorItem]:
         msg = str(err.get("msg") or "Invalid")
         typ = str(err.get("type") or "invalid")
         code = _map_error_type_to_code(typ, msg)
-        items.append(ErrorItem(code=code, detail=translate(code) if translate else msg, attr=attr))
+        items.append(ErrorItem(code=code, detail=translate(code, fallback=msg), attr=attr))
     return items
 
 
@@ -90,6 +96,23 @@ def get_exception_handlers() -> Mapping[Type[Exception], Any]:
         return to_http_response(exc)
 
     mapping[BaseError] = handle_base_error
+
+    async def handle_unexpected_error(request: Request, exc: Exception) -> JSONResponse:  # type: ignore[override]
+        logger.exception("Unhandled exception during request processing")
+        try:
+            sentry_sdk.capture_exception(exc)
+        except Exception:  # pragma: no cover - defensive
+            logger.debug("Failed to report unexpected exception to Sentry.", exc_info=True)
+        fallback_msg = "Internal server error"
+        message = translate("internal_error", fallback=fallback_msg)
+        error = ErrorItem(code="internal_error", detail=message)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "message": message,
+                "errors": [error.model_dump()],
+            },
+        )
+
+    mapping[Exception] = handle_unexpected_error
     return mapping
-
-

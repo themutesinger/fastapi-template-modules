@@ -1,0 +1,12 @@
+[
+  "conflict",
+  "external_api_error",
+  "external_http_error",
+  "external_network_error",
+  "external_service_error",
+  "invalid",
+  "not_found",
+  "resource_not_found",
+  "user_exists",
+  "validation_failed"
+]

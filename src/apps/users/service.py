@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from di.providers.security import PBKDF2PasswordHasher
+from infra.security import PasswordHasher
 from infra.db.transaction import TransactionManager
 
 from .models import User
@@ -11,7 +11,7 @@ from .exceptions import UserAlreadyExistsError, UserNotFoundError
 
 
 class RegisterUserUseCase:
-    def __init__(self, repo: UserRepository, hasher: PBKDF2PasswordHasher, tx: TransactionManager) -> None:
+    def __init__(self, repo: UserRepository, hasher: PasswordHasher, tx: TransactionManager) -> None:
         self._repo = repo
         self._hasher = hasher
         self._tx = tx
@@ -44,20 +44,3 @@ class ListUsersUseCase:
 
     async def execute(self, *, page: int, page_size: int):
         return await self._repo.paginate(page=page, page_size=page_size)
-
-
-
-
-
-class ListUsersUsdfsseCase:
-    def __init__(self, repo: UserRepository, redis: RedisClient) -> None:
-        self._repo = repo
-        self._cache = redis
-
-    async def execute(self, *, page: int, page_size: int):
-        data =  await self._repo.paginate(page=page, page_size=page_size)
-        self._cache.set(data)
-        return await self._repo.paginate(page=page, page_size=page_size)
-
-
-

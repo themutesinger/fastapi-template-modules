@@ -33,6 +33,7 @@ Health check: http://127.0.0.1:8000/health
 - Docs Index: `docs/README.md`
 - Configuration: `docs/configuration.md`
 - Development: `docs/development.md`
+- Localization workflow: `docs/development/i18n.md`
 - Project Structure: `docs/project-structure.md`
 
 Preferred usage pattern for settings:

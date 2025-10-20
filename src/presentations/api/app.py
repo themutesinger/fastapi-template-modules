@@ -25,6 +25,15 @@ def create_app(container=None) -> FastAPI:
         app_title = app_settings.APP_NAME
         # Initialize observability (logging + sentry)
         init_observability(app_settings)
+        from infra.i18n import configure as configure_i18n
+
+        configure_i18n(
+            enabled=app_settings.I18N_ENABLED,
+            default_locale=app_settings.I18N_DEFAULT_LOCALE,
+            fallback_locale=app_settings.I18N_FALLBACK_LOCALE,
+            domain=app_settings.I18N_DOMAIN,
+            locales_dir=app_settings.I18N_LOCALES_DIR,
+        )
     except Exception:
         # Fallback to default INFO if settings are not ready yet
         configure_logging("INFO")
@@ -86,5 +95,3 @@ def create_app(container=None) -> FastAPI:
 
 
 app = create_app()
-
-

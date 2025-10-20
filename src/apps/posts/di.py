@@ -3,7 +3,15 @@ from __future__ import annotations
 from dishka import Provider, Scope, provide
 
 from infra.httpx.jsonplaceholder import JSONPlaceholderClient
-from .service import ListPostsUseCase, GetPostUseCase, CreatePostUseCase, UpdatePostUseCase, DeletePostUseCase
+from .service import (
+    ListPostsUseCase,
+    GetPostUseCase,
+    CreatePostUseCase,
+    UpdatePostUseCase,
+    DeletePostUseCase,
+    TriggerErrorUseCase,
+    LocalizedMessageUseCase,
+)
 
 
 class PostsProvider(Provider):
@@ -26,6 +34,14 @@ class PostsProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def delete_post_usecase(self, client: JSONPlaceholderClient) -> DeletePostUseCase:
         return DeletePostUseCase(client)
+
+    @provide(scope=Scope.REQUEST)
+    def trigger_error_usecase(self) -> TriggerErrorUseCase:
+        return TriggerErrorUseCase()
+
+    @provide(scope=Scope.REQUEST)
+    def localized_message_usecase(self) -> LocalizedMessageUseCase:
+        return LocalizedMessageUseCase()
 
 
 di = PostsProvider()

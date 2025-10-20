@@ -93,6 +93,13 @@ class Settings(BaseSettings):
     PAGINATION_DEFAULT_PAGE_SIZE: int = 20
     PAGINATION_MAX_PAGE_SIZE: int = 100
 
+    # i18n / Localization
+    I18N_ENABLED: bool = True
+    I18N_DEFAULT_LOCALE: str = "en"
+    I18N_FALLBACK_LOCALE: str = "en"
+    I18N_DOMAIN: str = "messages"
+    I18N_LOCALES_DIR: str = "src/infra/i18n/locales"
+
     # External APIs
     JSONPLACEHOLDER_BASE_URL: str = "https://jsonplaceholder.typicode.com"
 
